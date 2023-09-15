@@ -1,10 +1,53 @@
-import { createServer } from 'node:http'
+import express from 'express';
+import { DatabaseMemory } from "./database-memory.js"
 
-const server = createServer((req, res) => {
-    res.write('HELLO WORLD');
+const app = express();
+const port = 8080;
 
-    return res.end()
-    
+app.use(express.json());
+
+const database = new DatabaseMemory()
+
+app.get('/videos', (req, res) => {
+    const videos = database.list()
+
+    res.send(videos)
 })
 
-server.listen(8080) 
+app.post('/videos', (req, res) => {
+    const { title, descicao, duracao } = req.body
+    
+    database.create({
+        title,
+        descicao,
+        duracao
+    })
+    
+    return res.status(201).send()
+})
+
+app.put('/videos/:id', (req, res) => {
+    const videoId = req.params.id
+    const { title, descicao, duracao } = req.body
+
+    database.update(videoId, {
+        title,
+        descicao,
+        duracao
+    })
+
+    return res.status(204).send()
+})
+
+app.delete('/videos/:id', (req, res) => {
+    const videoId = req.params.id
+
+    database.delete(videoId)
+
+    return res.status(204).send()
+})
+
+
+app.listen(port, () => {
+    console.log(`Exemplo de app sendo ouvido na porta ${port}`);
+})
