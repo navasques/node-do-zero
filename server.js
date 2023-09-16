@@ -9,6 +9,8 @@ app.use(express.json());
 const database = new DatabaseMemory()
 
 app.get('/videos', (req, res) => {
+    const  search = req.query.search
+
     const videos = database.list()
 
     res.send(videos)
