@@ -3,7 +3,7 @@ import { DatabaseMemory } from "./database-memory.js"
 import { DatabasePostgres } from './database-postgres.js';
 
 const app = express();
-const port = 8080;
+const port =  process.env.PORT;
 
 app.use(express.json());
 
@@ -54,5 +54,5 @@ app.delete('/videos/:id', async (req, res) => {
 
 
 app.listen(port, () => {
-    console.log(`Exemplo de app sendo ouvido na porta ${port}`);
+    port ?? 3333
 })
