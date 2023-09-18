@@ -1,52 +1,55 @@
 import express from 'express';
 import { DatabaseMemory } from "./database-memory.js"
+import { DatabasePostgres } from './database-postgres.js';
 
 const app = express();
 const port = 8080;
 
 app.use(express.json());
 
-const database = new DatabaseMemory()
+// const database = new DatabaseMemory()
+const database = new DatabasePostgres()
 
-app.get('/videos', (req, res) => {
+
+app.get('/videos', async (req, res) => {
     const  search = req.query.search
 
-    const videos = database.list()
+    const videos = await database.list()
 
     res.send(videos)
 })
 
-app.post('/videos', (req, res) => {
-    const { title, descicao, duracao } = req.body
+app.post('/videos', async (req, res) => {
+    const { title, descricao, duracao } = req.body
     
-    database.create({
+    await database.create({
         title,
-        descicao,
+        descricao,
         duracao
     })
     
     return res.status(201).send()
 })
 
-app.put('/videos/:id', (req, res) => {
+app.put('/videos/:id', async (req, res) => {
     const videoId = req.params.id
-    const { title, descicao, duracao } = req.body
+    const { title, descricao, duracao } = req.body
 
-    database.update(videoId, {
+    await database.update(videoId, {
         title,
-        descicao,
+        descricao,
         duracao
     })
 
     return res.status(204).send()
 })
 
-app.delete('/videos/:id', (req, res) => {
+app.delete('/videos/:id', async (req, res) => {
     const videoId = req.params.id
 
-    database.delete(videoId)
+    await database.delete(videoId)
 
-    return res.status(204).send()
+    return res.status(204).send('Video deletado com sucesso!')
 })
 
 
